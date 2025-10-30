@@ -1,0 +1,54 @@
+#include <stdio.h>
+
+struct process {
+    int pid, arrival, burst, waiting, turnaround, completion;
+};
+
+void fcfs(struct process p[], int n, int startTime) {
+    int time = startTime;
+    for (int i = 0; i < n; i++) {
+        if (time < p[i].arrival)
+            time = p[i].arrival;
+        p[i].waiting = time - p[i].arrival;
+        time += p[i].burst;
+        p[i].completion = time;
+        p[i].turnaround = p[i].completion - p[i].arrival;
+    }
+}
+
+int main() {
+    int n1, n2, i;
+    struct process sys[10], user[10];
+
+    printf("Enter number of system processes: ");
+    scanf("%d", &n1);
+    for (i = 0; i < n1; i++) {
+        sys[i].pid = i + 1;
+        printf("System P%d Arrival and Burst: ", i + 1);
+        scanf("%d %d", &sys[i].arrival, &sys[i].burst);
+    }
+
+    printf("Enter number of user processes: ");
+    scanf("%d", &n2);
+    for (i = 0; i < n2; i++) {
+        user[i].pid = i + 1;
+        printf("User P%d Arrival and Burst: ", i + 1);
+        scanf("%d %d", &user[i].arrival, &user[i].burst);
+    }
+
+    fcfs(sys, n1, 0);
+    int lastCompletion = sys[n1 - 1].completion;
+    fcfs(user, n2, lastCompletion);
+
+    printf("\nSystem Queue (High Priority):\n");
+    printf("PID\tAT\tBT\tWT\tTAT\tCT\n");
+    for (i = 0; i < n1; i++)
+        printf("%d\t%d\t%d\t%d\t%d\t%d\n", sys[i].pid, sys[i].arrival, sys[i].burst, sys[i].waiting, sys[i].turnaround, sys[i].completion);
+
+    printf("\nUser Queue (Low Priority):\n");
+    printf("PID\tAT\tBT\tWT\tTAT\tCT\n");
+    for (i = 0; i < n2; i++)
+        printf("%d\t%d\t%d\t%d\t%d\t%d\n", user[i].pid, user[i].arrival, user[i].burst, user[i].waiting, user[i].turnaround, user[i].completion);
+
+    return 0;
+}
